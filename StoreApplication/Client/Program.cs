@@ -43,6 +43,7 @@ namespace Client
                 switch(menuNav)
                 {
                     case 1:
+                        Console.WriteLine(""); //formatting line space only
                         d.ShowProducts(storeID);
                         ShopLoop(d, custFirstName, custLastName, storeID, custID);
                         //
@@ -119,7 +120,8 @@ namespace Client
             bool cartCheck = true;
             do
             {
-                Console.WriteLine("1. Add to Cart\n 2. Remove from Cart\n3.View Cart \n4.Checkout\n5.Back");
+                Console.WriteLine("_______________________________");
+                Console.WriteLine("1. Add to Cart\n2. Remove from Cart\n3. View Cart \n4. Checkout\n5. Back");
                 shopNav = d.ValidateIntInput(Console.ReadLine(), 5);
 
                 switch(shopNav)

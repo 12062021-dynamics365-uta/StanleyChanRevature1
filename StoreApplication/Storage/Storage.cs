@@ -15,15 +15,7 @@ namespace Storage
             fName = firstName;
             lName = lastName;
         }
-
-        public void checkout()
-        {
-            purchased.Add(cart);
-        }
-        public static void cancel()
-        {
-
-        }
+      
         /*must be able to view past purchases
         must be able to view available store locations
         must be able to purchase 1 or more products
@@ -43,15 +35,14 @@ namespace Storage
         private int productID { get; set; }
 
 
-        public Product(string name, double price, string desc)
+
+        public Product(int prodID, string name, double price, string desc)
         {
+            this.prodID = prodID;
             this.name = name;
             this.price = price;
             this.desc = desc;
         }
-
-        private Store belongsTo { get; set; }
-        //to view purchases of a store
     }
 
     public class OrderItem
@@ -61,10 +52,12 @@ namespace Storage
 
         public int storeID { get; set; }
 
-        public OrderItem(Product BuyProduct, int quantity)
+
+        public OrderItem(Product BuyProduct, int quantity, int storeID)
         {
             this.BuyProduct = BuyProduct;
             this.quantity = quantity;
+            this.storeID = storeID;
         }
     }
 
@@ -72,36 +65,47 @@ namespace Storage
     {   //use dictionary<keyvalue, product> productDict over list?
 
         public int orderID { get; set; }
+
+
+        private int TotalCount;
+        private double TotalCost;
         public double totalCost
         {
-            get { return totalCost; }
+            get { return this.TotalCost; }
             set
             {
-                for (int index = 0; index < Items.Count; index++)
+                for (int index = 1; index < Items.Count; index++)
                 {
-                    totalCost += (Items[index].BuyProduct.price * Items[index].quantity); //price * quantity
-                }
-                if (totalCost > 500)
-                {
-                    //limit it somehow, probably within logic/Domain class rather than here
+                    this.TotalCost += (Items[index].BuyProduct.price * Items[index].quantity); //price * quantity
                 }
             }
         }
-        public Customer Buyer { get; set; }
-        public List<OrderItem> Items
+
+        public int totalCount
         {
-            get { return Items; }
+            get { return this.TotalCount; }
             set
             {
-
-                if (Items.Count > 50)
+                for (int i = 1; i < Items.Count; i++)
                 {
-                    //do nothing & print error message
+                    this.TotalCount += Items[i].quantity;
                 }
             }
+        }
 
 
-        }//Order consists of list of OrderItems that are certain quantities of product
+        public Customer Buyer { get; set; }
+
+        //private List<OrderItem> Itemz;
+        public List<OrderItem> Items = new List<OrderItem>();
+        
+        public Order()
+        {
+            //empty item so not null
+            Product phProduct = new Product(9999, "fakename", 0.00, "fakedesc");
+            OrderItem phOrderItem = new OrderItem(phProduct, 0, 999);
+            Items.Add(phOrderItem);
+        }
 
         /*must be able to compute its total cost
         must be able to contain at least 1 product

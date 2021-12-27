@@ -37,7 +37,7 @@ namespace Domain
 
         public void ShowProducts(int storeID) //stretch: show store name at the top before displaying product list
         {
-            queryString = @"SELECT p.ProductID, ProductName, ProductPrice, ProductDesc 
+            queryString = @"SELECT p.ProductID, ProductName, ProductPrice, Quantity, ProductDesc 
                             FROM Inventory i LEFT JOIN Products p
                             ON i.ProductID = p.ProductID
                             WHERE StoreID = " + storeID.ToString();
@@ -46,7 +46,11 @@ namespace Domain
             SqlDataReader dr = cmd.ExecuteReader();
             while (dr.Read())
             {
-                Console.WriteLine(dr[0].ToString() + ". Product Name: " + dr[1].ToString() + " \t Product Price: " + dr[2].ToString() +"\n   Description: " + dr[3].ToString());
+
+                Console.WriteLine(dr[0].ToString() + ". Product Name: " + dr[1].ToString() + 
+                                  "\t Product Price: " + dr[2].ToString() +
+                                  "\n   Quantity: " + dr[3].ToString() + 
+                                  "\n   Description: " + dr[4].ToString() + "\n");
             }
             con.Close();
         }
@@ -66,6 +70,11 @@ namespace Domain
                 Console.WriteLine(@"Product Name: " + dr[0].ToString() + " \t Product Price: " + dr[1].ToString() + "\tQuantity: " + dr[2].ToString() +
                     "\tTotal: " + dr[3].ToString() + "\tOrderDate" + dr[4].ToString() + 
                     "\nStore Name: " + dr[5].ToString() + "\tStore Location: " + dr[6].ToString());
+            }
+          
+            if (!dr.Read())
+            {
+                Console.WriteLine("Customer has not made any past purchases.");
             }
             con.Close();
         }
@@ -98,10 +107,13 @@ namespace Domain
         public List<Product> productShoes;
         public List<string> storeLocations;
         */
-        public Customer currentCustomer { get; set; }
-        public Order currentOrder { get; set; }
-        public OrderItem currentOrderItem { get; set; }
+
+        public Customer currentCustomer;
+        public Order currentOrder = new Order();
+        public OrderItem currentOrderItem;
         private int countingOrders;
+        public Product currentProduct;
+
 
         //was made before we went over ADO.NET
         /*public void InitializeStoreAndProducts()
@@ -214,27 +226,24 @@ namespace Domain
         public void AddToCart(int storeID, int prodID, int quantity) //new param, productID and quantity, put those into currentOrderItem obj
         {
             //take product from sql table and put it into currentOrderItem object to store in cart
-            queryString = "SELECT ProductName, ProductPrice, ProductDesc from " +
-                          "FROM Inventory i LEFT JOIN Products p" +
-                          "ON i.ProductID = p.ProductID" +
+
+            queryString = "SELECT ProductName, ProductPrice, ProductDesc " +
+                          "FROM Inventory i LEFT JOIN Products p " +
+                          "ON i.ProductID = p.ProductID " +
                           "WHERE StoreID = " + storeID.ToString() + " AND p.ProductID = " + prodID.ToString();
             con.Open();
             SqlCommand cmd = new SqlCommand(queryString, con);
             SqlDataReader dr = cmd.ExecuteReader();
             dr.Read();
-            currentOrderItem.BuyProduct.name = dr[0].ToString();
-            currentOrderItem.BuyProduct.price = Double.Parse(dr[1].ToString());
-            currentOrderItem.BuyProduct.desc = dr[2].ToString();    //this is kinda useless might comment it out dunno
+
+            currentProduct = new Product(prodID, dr[0].ToString(), Double.Parse(dr[1].ToString()), dr[2].ToString());
             con.Close();
-            currentOrderItem.BuyProduct.prodID = prodID;
-            currentOrderItem.storeID = storeID;
-            currentOrderItem.quantity = quantity;
+            currentOrderItem = new OrderItem(currentProduct, quantity, storeID);
             //all currrentOrderItem fields populated
 
-            currentOrder.totalCost += currentOrderItem.BuyProduct.price * quantity;
             //Add currentOrderItem(product and quantity of product) to cart of current Customer
             currentOrder.Items.Add(currentOrderItem);
-            currentCustomer.cart = currentOrder;
+            currentOrder.totalCost += currentOrderItem.BuyProduct.price * quantity;
             countingOrders++;   //increment every time so order IDs are unique
             currentOrder.orderID = countingOrders;
         }
@@ -251,10 +260,18 @@ namespace Domain
 
         public void viewCart()
         {
-            Console.WriteLine("#. \t Name \t Price \t Quantity");
-            foreach (OrderItem o in currentOrder.Items)
+
+            Console.WriteLine("\n#. Name \tPrice \tQuantity");
+            try
             {
-                Console.WriteLine("1. " + o.BuyProduct.name + "\t" + o.BuyProduct.price + "\t" + o.quantity);
+                for(int count = 1; count < currentOrder.Items.Count; count++)
+                {
+                    Console.WriteLine(count + ". " + currentOrder.Items[count].BuyProduct.name + "\t" + currentOrder.Items[count].BuyProduct.price + "\t" + currentOrder.Items[count].quantity);
+                }
+            }
+            catch (NullReferenceException)
+            {
+                Console.WriteLine("Cart is empty.");
             }
         }
 
@@ -315,7 +332,6 @@ namespace Domain
             minInput = Int32.Parse(dr[0].ToString());
             maxInput = Int32.Parse(dr[1].ToString());
             con.Close();
-            Console.WriteLine("min: " + minInput + "\tmax: " + maxInput);
 
             conversionBool = Int32.TryParse(choice, out int convertedNumber);
             if (!conversionBool || convertedNumber < 1 || convertedNumber > maxInput || convertedNumber < minInput)
