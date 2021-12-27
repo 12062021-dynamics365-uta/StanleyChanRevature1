@@ -15,8 +15,7 @@ namespace Storage
             fName = firstName;
             lName = lastName;
         }
-
-        
+      
         /*must be able to view past purchases
         must be able to view available store locations
         must be able to purchase 1 or more products
@@ -36,6 +35,7 @@ namespace Storage
         private int productID { get; set; }
 
 
+
         public Product(int prodID, string name, double price, string desc)
         {
             this.prodID = prodID;
@@ -43,8 +43,6 @@ namespace Storage
             this.price = price;
             this.desc = desc;
         }
-
-        
     }
 
     public class OrderItem
@@ -53,6 +51,7 @@ namespace Storage
         public int quantity { get; set; }
 
         public int storeID { get; set; }
+
 
         public OrderItem(Product BuyProduct, int quantity, int storeID)
         {
@@ -66,6 +65,7 @@ namespace Storage
     {   //use dictionary<keyvalue, product> productDict over list?
 
         public int orderID { get; set; }
+
 
         private int TotalCount;
         private double TotalCost;
@@ -106,6 +106,7 @@ namespace Storage
             OrderItem phOrderItem = new OrderItem(phProduct, 0, 999);
             Items.Add(phOrderItem);
         }
+
         /*must be able to compute its total cost
         must be able to contain at least 1 product
         must be able to limit its content to no more than 50 items

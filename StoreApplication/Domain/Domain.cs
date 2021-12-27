@@ -46,6 +46,7 @@ namespace Domain
             SqlDataReader dr = cmd.ExecuteReader();
             while (dr.Read())
             {
+
                 Console.WriteLine(dr[0].ToString() + ". Product Name: " + dr[1].ToString() + 
                                   "\t Product Price: " + dr[2].ToString() +
                                   "\n   Quantity: " + dr[3].ToString() + 
@@ -70,6 +71,7 @@ namespace Domain
                     "\tTotal: " + dr[3].ToString() + "\tOrderDate" + dr[4].ToString() + 
                     "\nStore Name: " + dr[5].ToString() + "\tStore Location: " + dr[6].ToString());
             }
+          
             if (!dr.Read())
             {
                 Console.WriteLine("Customer has not made any past purchases.");
@@ -105,11 +107,13 @@ namespace Domain
         public List<Product> productShoes;
         public List<string> storeLocations;
         */
+
         public Customer currentCustomer;
         public Order currentOrder = new Order();
         public OrderItem currentOrderItem;
         private int countingOrders;
         public Product currentProduct;
+
 
         //was made before we went over ADO.NET
         /*public void InitializeStoreAndProducts()
@@ -222,6 +226,7 @@ namespace Domain
         public void AddToCart(int storeID, int prodID, int quantity) //new param, productID and quantity, put those into currentOrderItem obj
         {
             //take product from sql table and put it into currentOrderItem object to store in cart
+
             queryString = "SELECT ProductName, ProductPrice, ProductDesc " +
                           "FROM Inventory i LEFT JOIN Products p " +
                           "ON i.ProductID = p.ProductID " +
@@ -230,6 +235,7 @@ namespace Domain
             SqlCommand cmd = new SqlCommand(queryString, con);
             SqlDataReader dr = cmd.ExecuteReader();
             dr.Read();
+
             currentProduct = new Product(prodID, dr[0].ToString(), Double.Parse(dr[1].ToString()), dr[2].ToString());
             con.Close();
             currentOrderItem = new OrderItem(currentProduct, quantity, storeID);
@@ -254,6 +260,7 @@ namespace Domain
 
         public void viewCart()
         {
+
             Console.WriteLine("\n#. Name \tPrice \tQuantity");
             try
             {
@@ -270,9 +277,7 @@ namespace Domain
 
         public bool checkCartLimit()
         {
-            //if (currentOrder == null)
-            //    return true;
-            if (currentOrder.totalCost > 500 || currentOrder.totalCount > 50)
+            if (currentOrder.totalCost > 500 || currentOrder.Items.Count > 50)
                 return false;
             else
                 return true;
