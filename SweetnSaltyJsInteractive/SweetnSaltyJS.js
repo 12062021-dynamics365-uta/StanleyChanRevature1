@@ -23,41 +23,49 @@ let startButton = document.createElement('button');
 document.body.appendChild(startButton);
 startButton.innerText = 'Start da ting';
 
-//global boolean
+//splain the rules
+let rules = document.createElement('p');
+document.body.append(rules);
+rules.innerText = "Enter a starting number and final number where the difference is between 200 and 10,000 inclusive."
++"\n Numbers must be positive. \nEvery multiple of 3 will print 'sweet'. \nEvery multiple of 5 will print 'salty'."
++"\nEvery multiple of 15 will print 'sweetn'Salty'.";
+
+linebreak = document.createElement("br");
+document.body.appendChild(linebreak);
+
+
+//global values
 let goodValues = false;
+let startValue = 0, finalValue = 0;
 
 //global delete button
 let deleteStuff = document.createElement('button');
-deleteStuff.innerText = 'Press to delete stuff';
+deleteStuff.innerText = 'Press to delete stuff and do it again';
+
+//startNum input
+let startNum = document.createElement('input');
+
+//startNum button
+let submitStartNum = document.createElement('button');
+submitStartNum.innerText = 'Enter starting number';
+
+//finalNum input
+let finalNum = document.createElement('input');
+
+//finalNum button
+let submitFinalNum = document.createElement('button');
+submitFinalNum.innerText = 'Enter final number';
+
+//error message
+let errorMsg = document.createElement('p');
 
 //validation functions
 function validateNums() {
-    //splain the rules
-    let rules = document.createElement('p');
-    document.body.append(rules);
-    rules.innerText = "Enter a starting number and final number where the difference is between 200 and 10,000 inclusive."
-    +"\n Numbers must be positive. \nEvery multiple of 3 will print 'sweet', Every multiple of 5 will print 'salty',"
-    +"\nEvery multiple of 15 will print 'sweetn'Salty'.";
 
-    linebreak = document.createElement("br");
-    document.body.appendChild(linebreak);
-
-    //start inputfield and button
-    let startNum = document.createElement('input');
+    //append start inputfield and button
     document.body.appendChild(startNum);
-    let submitStartNum = document.createElement('button');
     document.body.appendChild(submitStartNum);
-    submitStartNum.innerText = 'Enter';
-
-    linebreak = document.createElement("br");
-    document.body.appendChild(linebreak);
-
-    //final inputfield and button
-    let finalNum = document.createElement('input');
-    document.body.appendChild(finalNum);
-    let submitFinalNum = document.createElement('button');
-    document.body.appendChild(submitFinalNum);
-    submitFinalNum.innerText = 'Enter';
+    
 
     linebreak = document.createElement("br");
     document.body.appendChild(linebreak);
@@ -65,6 +73,12 @@ function validateNums() {
     //startNum click
     submitStartNum.addEventListener('click', (e) => {
         let startValue = startNum.value;
+        document.body.appendChild(finalNum);
+        document.body.appendChild(submitFinalNum);
+
+        linebreak = document.createElement("br");
+        document.body.appendChild(linebreak);
+
         let finalValue = finalNum.value;
         console.log(startValue);
         console.log(finalValue);
@@ -72,7 +86,7 @@ function validateNums() {
         console.log(goodValues);
         if(goodValues)
         {
-            document.body.removeChild(errorMsg);
+            clearForPrintStuff();
             printStuff(startValue, finalValue);
             document.body.appendChild(deleteStuff); //delete button shows itself
         }
@@ -88,14 +102,13 @@ function validateNums() {
         console.log(goodValues);
         if(goodValues)
         {
-            document.body.removeChild(errorMsg);
+            clearForPrintStuff();
             printStuff(startValue, finalValue);
             document.body.appendChild(deleteStuff); //delete button shows itself
         }
     });
 
     //error message under input
-    let errorMsg = document.createElement('p');
     document.body.appendChild(errorMsg);
 
     function check(finalValue, startValue){
@@ -178,3 +191,14 @@ startButton.addEventListener('click', (e) => {
  deleteStuff.addEventListener('click', (e) => {
     window.location.reload();
 });
+
+//clear everything before printstuff
+function clearForPrintStuff()
+{
+    document.body.removeChild(rules);
+    document.body.removeChild(errorMsg);
+    document.body.removeChild(startNum);
+    document.body.removeChild(submitStartNum);
+    document.body.removeChild(finalNum);
+    document.body.removeChild(submitFinalNum);
+}
