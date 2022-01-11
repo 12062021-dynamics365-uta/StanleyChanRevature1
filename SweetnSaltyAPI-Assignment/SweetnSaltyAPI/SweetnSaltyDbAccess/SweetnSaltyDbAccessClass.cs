@@ -42,6 +42,7 @@ namespace SweetnSaltyDbAccess
             }
         }
 
+        //POST a person who likes a flavor 
         public async Task<SqlDataReader> PostPerson(string fname, string lname)
         {
             string sqlQuery = $"INSERT INTO Person(FirstName, LastName) VALUES (@firstname, @lastname)";
@@ -66,6 +67,40 @@ namespace SweetnSaltyDbAccess
                     return null;
                 }
             }
+        }
+
+        /*POST a person who likes a flavor 
+        -- GET a person and their liked flavors by id.
+        string sqlQuery = $"SELECT PersonID, FlavorName FROM PersonFlavorJunction pfj LEFT JOIN Flavor f ON pfj.FlavorID = f.FlavorID WHERE PersonID = {id}";
+        -- GET a list of flavors available.
+        string sqlQuery = "SELECT FlavorName FROM Flavor";
+         */
+
+        //-- GET a person by name.
+        public async Task<SqlDataReader> GetPersonByName(string fName, string lName)
+        {
+            string sqlQuery = $"SELECT Person WHERE FirstName LIKE {fName} LastName LIKE {lName})";
+            try
+            {
+                SqlCommand cmd = new SqlCommand(sqlQuery, this._con);
+                SqlDataReader dr = await cmd.ExecuteReaderAsync();
+                return dr;
+            }
+            catch(DbException ex)
+            {
+                Console.WriteLine("can't find in Db for GetPersonByName(DbAccess)");
+                return null;
+            }
+        }
+
+        //-- GET a list of flavors available.
+
+        public async Task<SqlDataReader> GetAllFlavors()
+        {
+            string sqlQuery = "SELECT FlavorName FROM Flavor";
+            SqlCommand cmd = new SqlCommand(sqlQuery, this._con);
+            SqlDataReader dr = await cmd.ExecuteReaderAsync();
+            return dr;
         }
     }
 }

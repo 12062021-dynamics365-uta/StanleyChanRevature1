@@ -12,5 +12,9 @@ namespace SweetnSaltyDbAccess
         Task<SqlDataReader> PostFlavor(string flavor);
 
         Task<SqlDataReader> PostPerson(string firstname, string lastname);
+
+        Task<SqlDataReader> GetPersonByName(string fName, string lName);
+
+        Task<SqlDataReader> GetAllFlavors();
     }
 }
